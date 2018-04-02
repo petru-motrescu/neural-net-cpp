@@ -5,11 +5,7 @@
 #include <memory>
 #include <iostream>
 #include <initializer_list>
-#include "neuron.h"
-
-typedef std::vector<double> Input;
-typedef std::vector<double> Output;
-typedef std::vector<std::shared_ptr<Neuron>> Layer;
+#include "layer.h"
 
 class Network
 {
@@ -24,52 +20,40 @@ public:
     {
         for (int count : layers)
         {
-            Layer layer;
-
-            for (int i = 0; i < count; i++)
-            {
-                auto neuron = std::make_shared<Neuron>();
-                layer.push_back(neuron);
-            }
-
+            Layer layer(count);
             m_layers.push_back(layer);
         }
 
+        m_layers[0].init_weights(1);
+
         for (int i = 1; i < m_layers.size(); i++)
         {
-            Layer& previous_layer = m_layers[i - 1];
-            Layer& current_layer = m_layers[i];
-
-            for (auto neuron : current_layer)
-            {
-                neuron->add_dendrites(previous_layer);
-            }
+            m_layers[i].init_weights(m_layers[i - 1].neuron_count());
         }
     }
 
-    void learn(Input input, Output output)
+    void learn(std::vector<double>& input, std::vector<double>& expected)
     {
-        Layer& input_layer = get_input_layer();
-        for (int i = 0; i < input.size(); i++)
+        auto values = input;
+
+        for (auto& layer : m_layers)
         {
-            input_layer[i]->set_value(input[i]);
+            values = layer.compute(values);
         }
+
+        // TODO back propagation
     }
 
-    Output compute(Input input)
+    std::vector<double> compute(std::vector<double>& input)
     {
-        return Output();
-    }
+        std::vector<double> values = input;
 
-private:
-    Layer& get_input_layer()
-    {
-        return m_layers[0];
-    }
+        for (auto& layer : m_layers)
+        {
+            values = layer.compute(values);
+        }
 
-    Layer& get_output_layer()
-    {
-        return m_layers[m_layers.size() - 1];
+        return values;
     }
 
 private:

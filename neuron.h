@@ -3,46 +3,30 @@
 #ifndef NEURON_H
 #define NEURON_H
 
-class Neuron;
-
-struct Dendrite
-{
-    std::shared_ptr<Neuron> source;
-    double weight;
-};
+#include <vector>
 
 class Neuron
 {
 public:
-    void add_dendrite(std::shared_ptr<Neuron> source)
+    void init_weights(int count)
     {
-        Dendrite dendrite;
-        dendrite.source = source;
-        dendrite.weight = 1.0;
-        m_dendrites.push_back(dendrite);
+        m_weights = std::vector<double>(count, 1.0);
     }
 
-    void add_dendrites(std::vector<std::shared_ptr<Neuron>>& sources)
+    double compute(std::vector<double>& inputs)
     {
-        for (auto source : sources)
+        double sum = 0;
+
+        for (int i = 0; i < m_weights.size(); i++)
         {
-            add_dendrite(source);
+            sum += inputs[i] * m_weights[i];
         }
-    }
-
-    void set_value(double value)
-    {
-        m_value = value;
-    }
-
-    double get_value()
-    {
-        return m_value;
+        
+        return sum; // TODO sigmoid
     }
 
 private:
-    double m_value;
-    std::vector<Dendrite> m_dendrites;
+    std::vector<double> m_weights;
 };
 
 #endif // NEURON_H
