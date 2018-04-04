@@ -4,6 +4,7 @@
 #define NEURON_H
 
 #include <vector>
+#include <cmath>
 
 class Neuron
 {
@@ -22,7 +23,8 @@ public:
             sum += inputs[i] * m_weights[i];
         }
         
-        return sum; // TODO sigmoid
+        auto ex = std::exp(sum);
+        return ex / (ex + 1);
     }
 
 private:

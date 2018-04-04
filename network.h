@@ -6,6 +6,7 @@
 #include <iostream>
 #include <initializer_list>
 #include "layer.h"
+#include "utils.h"
 
 class Network
 {
@@ -41,9 +42,12 @@ public:
             values = layer.compute(values);
         }
 
+        Utils::log_vector_nl(expected);
+        Utils::log_vector_nl(values);
+
         // TODO back propagation
     }
-
+    
     std::vector<double> compute(std::vector<double>& input)
     {
         std::vector<double> values = input;
