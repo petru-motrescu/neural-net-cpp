@@ -21,5 +21,7 @@ int main()
     output_layer.push_back(Neuron{0.3, 0.5, 0.9});
 
     Network net{input_layer, hidden_layer, output_layer};
-    net.compute({1, 1});
+    
+    // TODO
+    output_layer[0].learn({0.73, 0.79, 0.69}, 0);
 }
