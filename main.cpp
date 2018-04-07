@@ -8,19 +8,22 @@
 
 int main()
 {
-    const int input_count = 36;
-    const int hidden_count = 18;
-    const int output_count = 10;
+    Network net{2, 3, 1};
+    net.learn({0, 0}, {1});
 
-    Network net{input_count, hidden_count, output_count};
+    // const int input_count = 36;
+    // const int hidden_count = 18;
+    // const int output_count = 10;
+
+    // Network net{input_count, hidden_count, output_count};
     
-    for (int i = 0; i < 10; i++)
-    {
-        std::vector<double> pixels;
-        std::vector<double> digit;
-        std::string filename = "train-data/train-1/" + std::to_string(i) + ".txt";
-        Utils::read_digit_bitmap(pixels, filename);
-        Utils::make_digit_vector(digit, i);
-        net.learn(pixels, digit);
-    }
+    // for (int i = 0; i < 10; i++)
+    // {
+    //     std::vector<double> pixels;
+    //     std::vector<double> digit;
+    //     std::string filename = "train-data/train-1/" + std::to_string(i) + ".txt";
+    //     Utils::read_digit_bitmap(pixels, filename);
+    //     Utils::make_digit_vector(digit, i);
+    //     net.learn(pixels, digit);
+    // }
 }

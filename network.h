@@ -5,59 +5,79 @@
 #include <memory>
 #include <iostream>
 #include <initializer_list>
-#include "layer.h"
+
+#include "neuron.h"
 #include "utils.h"
+
+typedef std::vector<Neuron> Layer;
+typedef std::vector<double> Values;
 
 class Network
 {
 public:
-    // Constructs a network given the list of layers.
-    //
-    // For example, Network net{2, 3, 1}; creates a network that:
-    // - 2 neurons in the input layer
-    // - 3 neurons in the hidden layer
-    // - 1 neuron in the output layer
-    Network(std::initializer_list<int> layers)
+    Network(std::initializer_list<int> neurons_per_layer)
     {
-        for (int count : layers)
+        int weight_count = 1;
+
+        for (int count : neurons_per_layer)
         {
-            Layer layer(count);
+            Layer layer;
+
+            for (int i = 0; i < count; i++)
+            {
+                Neuron neuron(weight_count);
+                layer.push_back(neuron);
+                weight_count = count;
+            }
+
             m_layers.push_back(layer);
-        }
-
-        m_layers[0].init_weights(1);
-
-        for (int i = 1; i < m_layers.size(); i++)
-        {
-            m_layers[i].init_weights(m_layers[i - 1].neuron_count());
         }
     }
 
-    void learn(std::vector<double>& input, std::vector<double>& expected)
+    void learn(Values input_values, Values expected_values)
     {
-        auto values = input;
-
         for (auto& layer : m_layers)
         {
-            values = layer.compute(values);
+            for (auto& neuron : layer)
+            {
+                neuron.compute(input_values);
+            }
         }
 
-        Utils::log_vector_nl(expected);
-        Utils::log_vector_nl(values);
+        Utils::log_vector_nl(output_values());
 
         // TODO back propagation
     }
     
-    std::vector<double> compute(std::vector<double>& input)
+    Values compute(Values input_values)
     {
-        std::vector<double> values = input;
-
         for (auto& layer : m_layers)
         {
-            values = layer.compute(values);
+            for (auto& neuron : layer)
+            {
+                neuron.compute(input_values);
+            }
         }
 
-        return values;
+        return output_values();
+    }
+
+private:
+    Values output_values()
+    {
+        Values output_values;
+        
+        for (auto& neuron : output_layer())
+        {
+            output_values.push_back(neuron.get_value());
+        }
+
+        return output_values;
+    }
+
+    Layer& output_layer()
+    {
+        return m_layers[m_layers.size() - 1];
     }
 
 private:

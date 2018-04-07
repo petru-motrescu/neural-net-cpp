@@ -38,10 +38,22 @@ public:
     }
 
     template<typename T>
+    static void log_vector(std::vector<T>&& v)
+    {
+        log_vector(v);
+    }
+
+    template<typename T>
     static void log_vector_nl(std::vector<T>& v)
     {
         log_vector(v);
         std::cout << std::endl;
+    }
+
+    template<typename T>
+    static void log_vector_nl(std::vector<T>&& v)
+    {
+        log_vector_nl(v);
     }
 };
 
