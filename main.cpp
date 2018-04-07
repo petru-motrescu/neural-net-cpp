@@ -8,22 +8,18 @@
 
 int main()
 {
-    Network net{2, 3, 1};
-    net.learn({0, 0}, {1});
+    Layer input_layer;
+    input_layer.push_back(Neuron());
+    input_layer.push_back(Neuron());
 
-    // const int input_count = 36;
-    // const int hidden_count = 18;
-    // const int output_count = 10;
+    Layer hidden_layer;
+    hidden_layer.push_back(Neuron{0.8, 0.2});
+    hidden_layer.push_back(Neuron{0.4, 0.9});
+    hidden_layer.push_back(Neuron{0.3, 0.5});
 
-    // Network net{input_count, hidden_count, output_count};
-    
-    // for (int i = 0; i < 10; i++)
-    // {
-    //     std::vector<double> pixels;
-    //     std::vector<double> digit;
-    //     std::string filename = "train-data/train-1/" + std::to_string(i) + ".txt";
-    //     Utils::read_digit_bitmap(pixels, filename);
-    //     Utils::make_digit_vector(digit, i);
-    //     net.learn(pixels, digit);
-    // }
+    Layer output_layer;
+    output_layer.push_back(Neuron{0.3, 0.5, 0.9});
+
+    Network net{input_layer, hidden_layer, output_layer};
+    net.compute({1, 1});
 }

@@ -9,12 +9,17 @@
 class Neuron
 {
 public:
-    Neuron(int input_size)
+    Neuron()
     {
-        m_weights = std::vector<double>(input_size, 1.0);
+        m_weights.push_back(1);
     }
 
-    void compute(std::vector<double>& input_values)
+    Neuron(std::initializer_list<double> weigths)
+    {
+        m_weights = weigths;
+    }
+
+    double compute(std::vector<double>& input_values)
     {
         auto sum = 0.0;
         for (int i = 0; i < m_weights.size(); i++)
@@ -23,16 +28,10 @@ public:
         }
         
         auto ex = std::exp(sum);
-        m_value = ex / (ex + 1);
-    }
-
-    double get_value() const
-    {
-        return m_value;
+        return ex / (ex + 1);
     }
 
 private:
-    double m_value;
     std::vector<double> m_weights;
 };
 
