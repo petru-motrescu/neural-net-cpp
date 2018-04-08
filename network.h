@@ -9,11 +9,12 @@
 #include "neuron.h"
 #include "utils.h"
 
-typedef std::vector<Neuron> Layer;
-typedef std::vector<double> Values;
-
+template<typename T>
 class Network
 {
+    typedef std::vector<Neuron<T>> Layer;
+    typedef std::vector<T> Values;
+
 public:
     Network(std::initializer_list<Layer> layers)
     {
@@ -32,7 +33,7 @@ public:
             }
 
             input_values = layer_values;
-            Utils::log_vector_nl(input_values);
+            utils::log_nl(input_values);
         }
 
         return input_values;

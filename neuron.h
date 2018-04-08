@@ -6,6 +6,7 @@
 #include <vector>
 #include <cmath>
 
+template<typename T>
 class Neuron
 {
 public:
@@ -14,17 +15,22 @@ public:
         m_weights.push_back(1);
     }
 
-    Neuron(std::initializer_list<double> weigths)
+    Neuron(std::initializer_list<T> weigths)
     {
         m_weights = weigths;
     }
 
-    double compute(std::vector<double> input_values)
+    T compute(std::vector<T> input_values)
     {
+        if (input_values.size() != m_weights.size())
+        {
+            throw std::length_error("Neuron got input of wrong size");
+        }
+
         return sigmoid(weigthed_sum(input_values));
     }
 
-    void learn(std::vector<double> input_values, double expected_value)
+    void learn(std::vector<T> input_values, T expected_value)
     {
         auto sum = weigthed_sum(input_values);
         auto dif = sigmoid_derivative(sum) * (expected_value - sigmoid(sum));
@@ -35,7 +41,7 @@ public:
     }
 
 private:
-    double weigthed_sum(std::vector<double>& input_values)
+    T weigthed_sum(std::vector<T>& input_values)
     {
         auto sum = 0.0;
         for (int i = 0; i < m_weights.size(); i++)
@@ -45,20 +51,20 @@ private:
         return sum;
     }
 
-    double sigmoid(double val)
+    double sigmoid(T val)
     {
-        double exp = std::exp(val);
+        T exp = std::exp(val);
         return exp / (exp + 1);
     }
 
-    double sigmoid_derivative(double val)
+    double sigmoid_derivative(T val)
     {
-        double sig = sigmoid(val);
+        T sig = sigmoid(val);
         return sig * (1 - sig);
     }
 
 private:
-    std::vector<double> m_weights;
+    std::vector<T> m_weights;
 };
 
 #endif // NEURON_H
