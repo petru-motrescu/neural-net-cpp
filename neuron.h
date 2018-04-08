@@ -20,33 +20,38 @@ public:
         m_weights = weigths;
     }
 
-    T compute(std::vector<T> input_values)
+    T compute(std::vector<T> inputs)
     {
-        if (input_values.size() != m_weights.size())
+        if (inputs.size() != m_weights.size())
         {
             throw std::length_error("Neuron got input of wrong size");
         }
 
-        return sigmoid(weigthed_sum(input_values));
+        return sigmoid(weigthed_sum(inputs));
     }
 
-    void learn(std::vector<T> input_values, T expected_value)
+    void learn(std::vector<T> inputs, T target)
     {
-        auto sum = weigthed_sum(input_values);
-        auto dif = sigmoid_derivative(sum) * (expected_value - sigmoid(sum));
-        for (int i = 0; i < input_values.size(); i++)
+        // Based on: https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
+
+        auto value = compute(inputs);
+        auto deriv = value * (1 - value);
+        auto delta = (target - value) * deriv;
+        auto alpha = 0.5; // learning rate
+
+        for (int i = 0; i < m_weights.size(); i++)
         {
-            m_weights[i] += dif / input_values[i];
+            m_weights[i] += alpha * delta * inputs[i];
         }
     }
 
 private:
-    T weigthed_sum(std::vector<T>& input_values)
+    T weigthed_sum(std::vector<T>& inputs)
     {
         auto sum = 0.0;
         for (int i = 0; i < m_weights.size(); i++)
         {
-            sum += input_values[i] * m_weights[i];
+            sum += inputs[i] * m_weights[i];
         }
         return sum;
     }
@@ -55,12 +60,6 @@ private:
     {
         T exp = std::exp(val);
         return exp / (exp + 1);
-    }
-
-    double sigmoid_derivative(T val)
-    {
-        T sig = sigmoid(val);
-        return sig * (1 - sig);
     }
 
 private:

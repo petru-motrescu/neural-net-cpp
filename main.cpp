@@ -11,5 +11,6 @@ using namespace utils;
 
 int main()
 {
-    // TODO sample
+    Neuron<double> o1{0.40, 0.45, 0.60};
+    o1.learn({0.59327, 0.596884, 1.0}, 0.01);
 }
