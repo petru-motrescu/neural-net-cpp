@@ -22,13 +22,31 @@ bool are_equal(double expected, double actual)
     return (diff > -threshold && diff < threshold);
 }
 
-void test_neuron_compute_1()
+void test_neuron_compute_ah1()
 {
-    Neuron<double> neuron{0.15, 0.2, 0.35};
+    Neuron<double> neuron{0.15, 0.20, 0.35};
     assert_equal(0.59327, neuron.compute({0.05, 0.1, 1.0}));
 }
 
-void test_neuron_compute_2()
+void test_neuron_compute_ah2()
+{
+    Neuron<double> neuron{0.25, 0.30, 0.35};
+    assert_equal(0.596884, neuron.compute({0.05, 0.1, 1.0}));
+}
+
+void test_neuron_compute_ao1()
+{
+    Neuron<double> neuron{0.40, 0.45, 0.60};
+    assert_equal(0.751365, neuron.compute({0.59327, 0.596884, 1.0}));
+}
+
+void test_neuron_compute_ao2()
+{
+    Neuron<double> neuron{0.50, 0.55, 0.60};
+    assert_equal(0.772928, neuron.compute({0.59327, 0.596884, 1.0}));
+}
+
+void test_neuron_compute_bo()
 {
     Neuron<double> neuron{0.3, 0.5, 0.9};
     assert_equal(0.774692, neuron.compute({0.73, 0.79, 0.69}));
@@ -36,6 +54,12 @@ void test_neuron_compute_2()
 
 int main()
 {
-    test_neuron_compute_1();
-    test_neuron_compute_2();
+    // A: https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
+    test_neuron_compute_ah1();
+    test_neuron_compute_ah2();
+    test_neuron_compute_ao1();
+    test_neuron_compute_ao2();
+
+    // B: http://stevenmiller888.github.io/mind-how-to-build-a-neural-network/
+    test_neuron_compute_bo();
 }
