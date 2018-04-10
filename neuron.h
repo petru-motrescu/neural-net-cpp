@@ -45,6 +45,11 @@ public:
         }
     }
 
+    const std::vector<T> weights() const
+    {
+        return m_weights;
+    }
+
 private:
     T weigthed_sum(std::vector<T>& inputs)
     {

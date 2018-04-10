@@ -31,13 +31,13 @@ namespace utils
     }
 
     template<typename T>
-    void log(std::vector<T>& v)
+    void log(const std::vector<T>& v)
     {
-        std::copy(v.begin(), v.end(), std::ostream_iterator<T>(std::cout, ", "));
+        std::copy(v.begin(), v.end(), std::ostream_iterator<T>(std::cout, ","));
     }
 
     template<typename T>
-    void log_nl(std::vector<T>& v)
+    void log_nl(const std::vector<T>& v)
     {
         log(v);
         std::cout << std::endl;
