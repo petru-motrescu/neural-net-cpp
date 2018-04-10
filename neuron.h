@@ -20,6 +20,12 @@ public:
         m_weights = weigths;
     }
 
+    Neuron(std::initializer_list<T> weigths, double bias)
+    {
+        m_weights = weigths;
+        m_bias = bias;
+    }
+
     T compute(std::vector<T> inputs)
     {
         if (inputs.size() != m_weights.size())
@@ -69,6 +75,7 @@ private:
 
 private:
     std::vector<T> m_weights;
+    double m_bias;
 };
 
 #endif // NEURON_H
