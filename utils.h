@@ -1,3 +1,5 @@
+// Petru Motrescu <petru.motrescu@gmail.com>, 2018
+
 #ifndef UTILS_H
 #define UTILS_H
 

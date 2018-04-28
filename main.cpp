@@ -11,8 +11,9 @@ using namespace utils;
 
 int main()
 {
-    Neuron<double> o1{0.40, 0.45, 0.60};
-    log_nl(o1.weights());
-    o1.learn({0.59327, 0.596884, 1.0}, 0.01);
-    log_nl(o1.weights());
+    Network<double>::Layer input_layer = { Neuron<double>(), Neuron<double>() };
+    Network<double>::Layer hidden_layer = { Neuron<double>(input_layer), Neuron<double>(input_layer) };
+    Network<double>::Layer output_layer = { Neuron<double>(hidden_layer), Neuron<double>(hidden_layer) };
+    Network<double> net = { input_layer, hidden_layer, output_layer };
+    utils::log_nl(net.compute({ 1, 1 }));
 }

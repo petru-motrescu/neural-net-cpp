@@ -1,3 +1,5 @@
+// Petru Motrescu <petru.motrescu@gmail.com>, 2018
+
 #ifndef NETWORK_H
 #define NETWORK_H
 
@@ -12,6 +14,7 @@
 template<typename T>
 class Network
 {
+public:
     typedef std::vector<Neuron<T>> Layer;
     typedef std::vector<T> Values;
 
@@ -23,20 +26,69 @@ public:
     
     Values compute(Values input_values)
     {
-        for (int i = 1; i < m_layers.size(); i++)
+        set_input(input_values);
+
+        for (int li = 1; li < m_layers.size(); li++)
         {
-            Values layer_values;
-
-            for (auto& neuron : m_layers[i])
+            for (auto& neuron : m_layers[li])
             {
-                layer_values.push_back(neuron.compute(input_values));
+                neuron.compute(m_layers[li - 1]);
             }
-
-            input_values = layer_values;
-            utils::log_nl(input_values);
         }
 
-        return input_values;
+        return get_output();
+    }
+
+    void learn(Values input_values, Values target_values)
+    {
+        compute(input_values);
+
+        Layer& output_layer = m_layers[m_layers.size() - 1];
+        for (int ni = 0; ni < output_layer.size(); ni++)
+        {
+            output_layer[ni].compute_delta(target_values[ni]);
+        }
+
+        for (int li = m_layers.size() - 2; li >= 0; li--)
+        {
+            Layer& curr_layer = m_layers[li];
+            Layer& next_layer = m_layers[li + 1];
+            for (int ni = 0; ni < curr_layer.size(); ni++)
+            {
+                curr_layer[ni].compute_delta(next_layer, ni);
+            }
+        }
+
+        for (int li = 1; li < m_layers.size(); li++)
+        {
+            for (auto& neuron : m_layers[li])
+            {
+                neuron.adjust_weigths(m_layers[li - 1]);
+            }
+        }
+    }
+
+private:
+    void set_input(Values input_values)
+    {
+        Layer& input_layer = m_layers[0];
+        for (int ni = 0; ni < input_layer.size(); ni++)
+        {
+            input_layer[ni].reset(input_values[ni]);
+        }
+    }
+
+    Values get_output()
+    {
+        Layer& output_layer = m_layers[m_layers.size() - 1];
+        Values output_values;
+
+        for (int ni = 0; ni < output_layer.size(); ni++)
+        {
+            output_values.push_back(output_layer[ni].value());
+        }
+
+        return output_values;
     }
 
 private:
