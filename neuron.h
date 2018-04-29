@@ -20,7 +20,7 @@ public:
 
     Neuron(Layer& prev_layer)
     {
-        m_weights = std::vector<T>(prev_layer.size(), 1);
+        m_weights = std::vector<T>(prev_layer.size(), 0.5);
     }
 
     Neuron(std::initializer_list<T> weigths)

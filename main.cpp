@@ -11,31 +11,71 @@ using namespace utils;
 
 int main()
 {
+    using Pixels = vector<double>;
+    using Digit = vector<double>;
     using Neuron = Neuron<double>;
     using Layer = Network<double>::Layer;
     
-    Layer input =
+    Layer input;
+    Layer hidden;
+    Layer output;
+
+    for (int i = 0; i < 25; i++)
     {
-        Neuron(),
-        Neuron(),
-        Neuron() // bias
+        input.push_back(Neuron());
     };
 
-    Layer hidden =
+    input.push_back(Neuron());
+    
+    for (int i = 0; i < 15; i++)
     {
-        Neuron{0.15, 0.20, 0.35},
-        Neuron{0.25, 0.30, 0.35},
-        Neuron() // bias
+        hidden.push_back(Neuron(input));
     };
 
-    Layer output =
+    hidden.push_back(Neuron());
+
+    for (int i = 0; i < 10; i++)
     {
-        Neuron{0.40, 0.45, 0.60},
-        Neuron{0.50, 0.55, 0.60}
+        output.push_back(Neuron(hidden));
     };
 
     Network<double> net = { input, hidden, output };
-    utils::log_nl(net.compute({ 0.05, 0.10 }));
 
-    net.learn({0.05, 0.10}, {0.01, 0.99});
+    vector<Digit> outputs;
+    for (int i = 0; i < 10; i++)
+    {
+        outputs.push_back(utils::make_digit_vector(i));
+    }
+    
+    vector<string> train_set_paths = 
+    {
+        "train-data/train-1/",
+    };
+
+    for (auto& path : train_set_paths)
+    {
+        vector<Pixels> inputs;
+        for (int i = 0; i < 10; i++)
+        {
+            string digit_file_path(path);
+            digit_file_path += to_string(i);
+            digit_file_path += ".txt";
+            inputs.push_back(utils::read_digit_bitmap(digit_file_path));
+        }
+
+        for (int i = 0; i < 10000; i++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                net.learn(inputs[j], outputs[j]);
+            }
+        }
+
+        for (int i = 0; i < 10; i++)
+        {
+            auto result = net.compute(inputs[i]);
+            cout << i << " --> " << utils::max(result) << " : ";
+            utils::log_nl(result);
+        }
+    }
 }
