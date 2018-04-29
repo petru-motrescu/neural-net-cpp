@@ -15,7 +15,7 @@ class Neuron
 public:
     Neuron()
     {
-        m_weights.push_back(1);
+        m_value = 1;
     }
 
     Neuron(Layer& prev_layer)
@@ -28,22 +28,23 @@ public:
         m_weights = weigths;
     }
 
-    Neuron(std::initializer_list<T> weigths, double bias)
-    {
-        m_weights = weigths;
-        m_bias = bias;
-    }
-
     T compute(Layer& prev_layer)
     {
-        if (prev_layer.size() != m_weights.size())
+        if (!is_bias())
         {
-            throw std::length_error("Neuron got input of wrong size");
+            if (prev_layer.size() != m_weights.size())
+            {
+                throw std::length_error("Neuron got input of wrong size");
+            }
+
+            m_value = sigmoid(weigthed_sum(prev_layer));
+
+            return m_value;
         }
-
-        m_value = sigmoid(weigthed_sum(prev_layer));
-
-        return m_value;
+        else
+        {
+            return m_value;
+        }
     }
 
     T compute(Values prev_values)
@@ -54,28 +55,37 @@ public:
 
     void update_delta(T target)
     {
-        m_delta = (target - m_value) * m_value * (1 - m_value);
+        if (!is_bias())
+        {
+            m_delta = (target - m_value) * m_value * (1 - m_value);
+        }
     }
 
     void update_delta(Layer& next_layer, int neuron_index)
     {
-        m_delta = 0;
-
-        for (auto& neuron : next_layer)
+        if (!is_bias())
         {
-            m_delta += neuron.weights(neuron_index) * neuron.delta();
-        }
+            m_delta = 0;
 
-        m_delta *= m_value * (1 - m_value);
+            for (auto& neuron : next_layer)
+            {
+                m_delta += neuron.weights()[neuron_index] * neuron.delta();
+            }
+
+            m_delta *= m_value * (1 - m_value);
+        }
     }
 
     void update_weights(Layer& input_layer)
     {
-        static const double learning_rate = 0.5;
-
-        for (int i = 0; i < input_layer.size(); i++)
+        if (!is_bias())
         {
-            m_weights[i] += learning_rate * m_delta * input_layer[i].value();
+            static const double learning_rate = 0.5;
+
+            for (int i = 0; i < m_weights.size(); i++)
+            {
+                m_weights[i] += learning_rate * m_delta * input_layer[i].value();
+            }
         }
     }
 
@@ -90,6 +100,7 @@ public:
     void reset(T value) { m_value = value; }
     T value() const { return m_value; }
     T delta() const { return m_delta; }
+    bool is_bias() const { return m_weights.size() == 0; }
     const std::vector<T> weights() const { return m_weights; }
 
 private:

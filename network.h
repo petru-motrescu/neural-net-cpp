@@ -46,7 +46,7 @@ public:
         Layer& output_layer = m_layers[m_layers.size() - 1];
         for (int ni = 0; ni < output_layer.size(); ni++)
         {
-            output_layer[ni].compute_delta(target_values[ni]);
+            output_layer[ni].update_delta(target_values[ni]);
         }
 
         for (int li = m_layers.size() - 2; li >= 0; li--)
@@ -55,7 +55,7 @@ public:
             Layer& next_layer = m_layers[li + 1];
             for (int ni = 0; ni < curr_layer.size(); ni++)
             {
-                curr_layer[ni].compute_delta(next_layer, ni);
+                curr_layer[ni].update_delta(next_layer, ni);
             }
         }
 
@@ -63,7 +63,7 @@ public:
         {
             for (auto& neuron : m_layers[li])
             {
-                neuron.adjust_weigths(m_layers[li - 1]);
+                neuron.update_weights(m_layers[li - 1]);
             }
         }
     }
@@ -72,9 +72,9 @@ private:
     void set_input(Values input_values)
     {
         Layer& input_layer = m_layers[0];
-        for (int ni = 0; ni < input_layer.size(); ni++)
+        for (int i = 0; i < input_values.size(); i++)
         {
-            input_layer[ni].reset(input_values[ni]);
+            input_layer[i].reset(input_values[i]);
         }
     }
 

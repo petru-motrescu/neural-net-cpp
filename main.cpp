@@ -11,9 +11,31 @@ using namespace utils;
 
 int main()
 {
-    Network<double>::Layer input_layer = { Neuron<double>(), Neuron<double>() };
-    Network<double>::Layer hidden_layer = { Neuron<double>(input_layer), Neuron<double>(input_layer) };
-    Network<double>::Layer output_layer = { Neuron<double>(hidden_layer), Neuron<double>(hidden_layer) };
-    Network<double> net = { input_layer, hidden_layer, output_layer };
-    utils::log_nl(net.compute({ 1, 1 }));
+    using Neuron = Neuron<double>;
+    using Layer = Network<double>::Layer;
+    
+    Layer input =
+    {
+        Neuron(),
+        Neuron(),
+        Neuron() // bias
+    };
+
+    Layer hidden =
+    {
+        Neuron{0.15, 0.20, 0.35},
+        Neuron{0.25, 0.30, 0.35},
+        Neuron() // bias
+    };
+
+    Layer output =
+    {
+        Neuron{0.40, 0.45, 0.60},
+        Neuron{0.50, 0.55, 0.60}
+    };
+
+    Network<double> net = { input, hidden, output };
+    utils::log_nl(net.compute({ 0.05, 0.10 }));
+
+    net.learn({0.05, 0.10}, {0.01, 0.99});
 }
