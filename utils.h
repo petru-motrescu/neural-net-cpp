@@ -9,16 +9,17 @@
 
 namespace utils
 {
-    std::vector<double> read_digit_bitmap(std::string filename)
+    template<typename T>
+    std::vector<T> read_digit_bitmap(std::string filename)
     {
-        std::vector<double> pixels;
+        std::vector<T> pixels;
         std::ifstream file(filename);
         if (file.is_open())
         {
             char c;
             while (file >> c)
             {
-                pixels.push_back(c == '.' ? 0.0 : 1.0);
+                pixels.push_back(c == '.' ? 0 : 1);
             }
         }
 
@@ -29,10 +30,11 @@ namespace utils
     // 0 -> { 1,0,0,0,0,0,0,0,0,0 }
     // 1 -> { 0,1,0,0,0,0,0,0,0,0 }
     // 2 -> { 0,0,1,0,0,0,0,0,0,0 }
-    std::vector<double> make_digit_vector(int digit)
+    template<typename T>
+    std::vector<T> make_digit_vector(int digit)
     {
-        std::vector<double> v = std::vector<double>(10, 0);
-        v[digit] = 1.0;
+        std::vector<T> v = std::vector<T>(10, 0);
+        v[digit] = 1;
         return v;
     }
 
@@ -74,9 +76,10 @@ namespace utils
         std::cout << std::endl;
     }
 
-    int max(std::vector<double>& v)
+    template<typename T>
+    int max(std::vector<T>& v)
     {
-        double max_pos = 0;
+        int max_pos = 0;
 
         for (int i = 0; i < v.size(); i++)
         {

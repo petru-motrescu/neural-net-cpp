@@ -22,6 +22,7 @@ public:
     Network(std::initializer_list<Layer> layers)
     {
         m_layers = layers;
+        m_learn_rate = 0.5;
     }
     
     Values compute(Values input_values)
@@ -63,9 +64,14 @@ public:
         {
             for (auto& neuron : m_layers[li])
             {
-                neuron.update_weights(m_layers[li - 1]);
+                neuron.update_weights(m_layers[li - 1], m_learn_rate);
             }
         }
+    }
+
+    void set_learn_rate(T rate)
+    {
+        m_learn_rate = rate;
     }
 
 private:
@@ -93,6 +99,7 @@ private:
 
 private:
     std::vector<Layer> m_layers;
+    T m_learn_rate;
 };
 
 #endif // NETWORK_H

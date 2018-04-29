@@ -69,22 +69,24 @@ public:
 
             for (auto& neuron : next_layer)
             {
-                m_delta += neuron.weights()[neuron_index] * neuron.delta();
+                if (!neuron.is_bias())
+                {
+                    m_delta += neuron.weights()[neuron_index] * neuron.delta();
+                }
             }
 
             m_delta *= m_value * (1 - m_value);
         }
     }
 
-    void update_weights(Layer& input_layer)
+    void update_weights(Layer& input_layer, T learn_rate)
     {
         if (!is_bias())
         {
-            static const double learning_rate = 0.5;
-
             for (int i = 0; i < m_weights.size(); i++)
             {
-                m_weights[i] += learning_rate * m_delta * input_layer[i].value();
+                T shift = learn_rate * m_delta * input_layer[i].value();
+                m_weights[i] += shift;
             }
         }
     }
@@ -136,7 +138,6 @@ private:
 
 private:
     std::vector<T> m_weights;
-    double m_bias;
     T m_value;
     T m_delta;
 };
