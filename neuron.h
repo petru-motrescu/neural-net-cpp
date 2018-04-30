@@ -23,7 +23,7 @@ public:
     {
         for (int i = 0; i < prev_layer.size(); i++)
         {
-            m_weights.push_back(1);
+            m_weights.push_back(0);
         }
     }
 
