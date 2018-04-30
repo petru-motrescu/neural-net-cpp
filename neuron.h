@@ -34,7 +34,11 @@ public:
         {
             if (prev_layer.size() != m_weights.size())
             {
-                throw std::length_error("Neuron got input of wrong size");
+                std::string msg = "Neuron got input of wrong size. Expected: ";
+                msg += std::to_string(m_weights.size());
+                msg += ", Actual: ";
+                msg += std::to_string(prev_layer.size());
+                throw std::length_error(msg);
             }
 
             m_value = sigmoid(weigthed_sum(prev_layer));
@@ -79,13 +83,13 @@ public:
         }
     }
 
-    void update_weights(Layer& input_layer, T learn_rate)
+    void update_weights(Layer& prev_layer, T learn_rate)
     {
         if (!is_bias())
         {
             for (int i = 0; i < m_weights.size(); i++)
             {
-                T shift = learn_rate * m_delta * input_layer[i].value();
+                T shift = learn_rate * m_delta * prev_layer[i].value();
                 m_weights[i] += shift;
             }
         }

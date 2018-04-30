@@ -26,10 +26,6 @@ namespace utils
         return pixels;
     }
 
-    // Convert a digit (0 - 9) to a vector of 0s and a single 1:
-    // 0 -> { 1,0,0,0,0,0,0,0,0,0 }
-    // 1 -> { 0,1,0,0,0,0,0,0,0,0 }
-    // 2 -> { 0,0,1,0,0,0,0,0,0,0 }
     template<typename T>
     std::vector<T> make_digit_vector(int digit)
     {
@@ -68,7 +64,7 @@ namespace utils
             }
             else
             {
-                std::cout << "X";
+                std::cout << "O";
             }
         }
         

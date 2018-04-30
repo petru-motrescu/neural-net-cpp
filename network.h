@@ -19,22 +19,56 @@ public:
     typedef std::vector<T> Values;
 
 public:
-    Network(std::initializer_list<Layer> layers)
+    Network()
     {
-        m_layers = layers;
-        m_learn_rate = 0.5;
+        m_learn_rate = 1;
     }
-    
+
+    void add_layers(std::vector<int> neuron_counts)
+    {
+        for (int i = 0; i < neuron_counts.size(); i++)
+        {
+            bool add_bias = (i < (neuron_counts.size() - 1));
+            add_layer(neuron_counts[i], add_bias);
+        }
+    }
+
+    void add_layer(int neuron_count, bool add_bias_neuron = true)
+    {
+        Layer layer;
+
+        for (int i = 0; i < neuron_count; i++)
+        {
+            if (m_layers.size() > 0)
+            {
+                layer.push_back(Neuron<T>(m_layers[m_layers.size() - 1]));
+            }
+            else
+            {
+                layer.push_back(Neuron<T>());
+            }
+        };
+
+        if (add_bias_neuron)
+        {
+            layer.push_back(Neuron<T>());
+        }
+
+        m_layers.push_back(layer);
+    }
+
+    void set_learn_rate(T rate)
+    {
+        m_learn_rate = rate;
+    }
+
     Values compute(Values input_values)
     {
         set_input(input_values);
 
-        for (int li = 1; li < m_layers.size(); li++)
+        for (int i = 1; i < m_layers.size(); i++)
         {
-            for (auto& neuron : m_layers[li])
-            {
-                neuron.compute(m_layers[li - 1]);
-            }
+            compute(m_layers[i], m_layers[i - 1]);
         }
 
         return get_output();
@@ -43,35 +77,9 @@ public:
     void learn(Values input_values, Values target_values)
     {
         compute(input_values);
-
-        Layer& output_layer = m_layers[m_layers.size() - 1];
-        for (int ni = 0; ni < output_layer.size(); ni++)
-        {
-            output_layer[ni].update_delta(target_values[ni]);
-        }
-
-        for (int li = m_layers.size() - 2; li >= 0; li--)
-        {
-            Layer& curr_layer = m_layers[li];
-            Layer& next_layer = m_layers[li + 1];
-            for (int ni = 0; ni < curr_layer.size(); ni++)
-            {
-                curr_layer[ni].update_delta(next_layer, ni);
-            }
-        }
-
-        for (int li = 1; li < m_layers.size(); li++)
-        {
-            for (auto& neuron : m_layers[li])
-            {
-                neuron.update_weights(m_layers[li - 1], m_learn_rate);
-            }
-        }
-    }
-
-    void set_learn_rate(T rate)
-    {
-        m_learn_rate = rate;
+        update_output_deltas(target_values);
+        update_hidden_deltas();
+        update_weights();
     }
 
 private:
@@ -86,15 +94,67 @@ private:
 
     Values get_output()
     {
-        Layer& output_layer = m_layers[m_layers.size() - 1];
         Values output_values;
+        Layer& output_layer = m_layers[m_layers.size() - 1];
 
-        for (int ni = 0; ni < output_layer.size(); ni++)
+        for (int i = 0; i < output_layer.size(); i++)
         {
-            output_values.push_back(output_layer[ni].value());
+            if (!output_layer[i].is_bias())
+            {
+                output_values.push_back(output_layer[i].value());
+            }
         }
 
         return output_values;
+    }
+
+    void compute(Layer& curr_layer, Layer& prev_layer)
+    {
+        for (int i = 0; i < curr_layer.size(); i++)
+        {
+            curr_layer[i].compute(prev_layer);
+        }
+    }
+
+    void update_hidden_deltas()
+    {
+        for (int i = m_layers.size() - 2; i >= 0; i--)
+        {
+            update_hidden_deltas(m_layers[i], m_layers[i + 1]);
+        }
+    }
+
+    void update_hidden_deltas(Layer& curr_layer, Layer& next_layer)
+    {
+        for (int i = 0; i < curr_layer.size(); i++)
+        {
+            curr_layer[i].update_delta(next_layer, i);
+        }
+    }
+
+    void update_output_deltas(Values target_values)
+    {
+        Layer& output_layer = m_layers[m_layers.size() - 1];
+        for (int i = 0; i < target_values.size(); i++)
+        {
+            output_layer[i].update_delta(target_values[i]);
+        }
+    }
+
+    void update_weights()
+    {
+        for (int i = 1; i < m_layers.size(); i++)
+        {
+            update_weights(m_layers[i], m_layers[i - 1]);
+        }
+    }
+
+    void update_weights(Layer& curr_layer, Layer& prev_layer)
+    {
+        for (int i = 0; i < curr_layer.size(); i++)
+        {
+            curr_layer[i].update_weights(prev_layer, m_learn_rate);
+        }
     }
 
 private:
