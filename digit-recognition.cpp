@@ -9,14 +9,25 @@
 using namespace std;
 using namespace utils;
 
-int main()
+using ValueType = long double;
+using BitmapType = vector<ValueType>;
+using DigitType = vector<ValueType>;
+
+void log_results(Network<ValueType>& network, vector<BitmapType>& input_bitmaps)
 {
-    using ValueType = double;
-    using BitmapType = vector<ValueType>;
-    using DigitType = vector<ValueType>;
-    
+    for (int digit = 0; digit < 10; digit++)
+    {
+        auto result = network.compute(input_bitmaps[digit]);
+        cout << digit << " --> " << utils::max(result) << " : ";
+        log_nl(result);
+    }
+}
+
+int main()
+{   
     Network<ValueType> network;
-    network.add_layers({100, 50, 25, 10});
+    network.add_layers({100, 20, 10});
+    network.set_learn_rate(0.25);
     
     vector<string> train_set_paths = 
     {
@@ -38,29 +49,22 @@ int main()
         for (int digit = 0; digit < 10; digit++)
         {
             output_digits.push_back(utils::make_digit_vector<ValueType>(digit));
-            log_nl(output_digits[digit]);
-        } 
-
-        for (int digit = 0; digit < 10; digit++)
-        {
-            auto result = network.compute(input_bitmaps[digit]);
-            cout << digit << " --> ";
-            log_nl(result);
         }
 
         for (int round = 0; round < 1000; round++)
         {
-            for (int digit = 0; digit < 10; digit++)
-            {
-                network.learn(input_bitmaps[digit], output_digits[digit]);
-            }
-        }
+            cout << endl << "### Round " << round << endl;
 
-        for (int digit = 0; digit < 10; digit++)
-        {
-            auto result = network.compute(input_bitmaps[digit]);
-            cout << digit << " --> ";
-            log_nl(result);
+            for (int lesson = 0; lesson < 10000; lesson++)
+            {
+                for (int digit = 0; digit < 10; digit++)
+                {
+                    network.learn(input_bitmaps[digit], output_digits[digit]);
+                }
+            }
+
+            log_results(network, input_bitmaps);
         }
+        // network.log();
     }
 }

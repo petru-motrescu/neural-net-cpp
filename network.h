@@ -11,6 +11,8 @@
 #include "neuron.h"
 #include "utils.h"
 
+using namespace std; // TEMPX
+
 template<typename T>
 class Network
 {
@@ -35,13 +37,14 @@ public:
 
     void add_layer(int neuron_count, bool add_bias_neuron = true)
     {
+        Layer* last_layer = (m_layers.size() > 0) ? &m_layers[m_layers.size() - 1] : nullptr;
         Layer layer;
 
         for (int i = 0; i < neuron_count; i++)
         {
-            if (m_layers.size() > 0)
+            if (last_layer != nullptr)
             {
-                layer.push_back(Neuron<T>(m_layers[m_layers.size() - 1]));
+                layer.push_back(Neuron<T>(*last_layer));
             }
             else
             {
@@ -64,96 +67,87 @@ public:
 
     Values compute(Values input_values)
     {
-        set_input(input_values);
-
-        for (int i = 1; i < m_layers.size(); i++)
-        {
-            compute(m_layers[i], m_layers[i - 1]);
-        }
-
-        return get_output();
-    }
-
-    void learn(Values input_values, Values target_values)
-    {
-        compute(input_values);
-        update_output_deltas(target_values);
-        update_hidden_deltas();
-        update_weights();
-    }
-
-private:
-    void set_input(Values input_values)
-    {
+        // Copy the values into the input layer.
         Layer& input_layer = m_layers[0];
         for (int i = 0; i < input_values.size(); i++)
         {
             input_layer[i].reset(input_values[i]);
         }
-    }
 
-    Values get_output()
-    {
+        // Compute the values in all layers.
+        for (int li = 1; li < m_layers.size(); li++)
+        {
+            for (int ni = 0; ni < m_layers[li].size(); ni++)
+            {
+                m_layers[li][ni].compute(m_layers[li - 1]);
+            }
+        }
+
+        // Copy the values from the output layer.
         Values output_values;
         Layer& output_layer = m_layers[m_layers.size() - 1];
-
-        for (int i = 0; i < output_layer.size(); i++)
+        for (int ni = 0; ni < output_layer.size(); ni++)
         {
-            if (!output_layer[i].is_bias())
+            if (!output_layer[ni].is_bias())
             {
-                output_values.push_back(output_layer[i].value());
+                output_values.push_back(output_layer[ni].value());
             }
         }
 
         return output_values;
     }
 
-    void compute(Layer& curr_layer, Layer& prev_layer)
+    void learn(Values input_values, Values target_values)
     {
-        for (int i = 0; i < curr_layer.size(); i++)
-        {
-            curr_layer[i].compute(prev_layer);
-        }
-    }
+        compute(input_values);
 
-    void update_hidden_deltas()
-    {
-        for (int i = m_layers.size() - 2; i >= 0; i--)
-        {
-            update_hidden_deltas(m_layers[i], m_layers[i + 1]);
-        }
-    }
-
-    void update_hidden_deltas(Layer& curr_layer, Layer& next_layer)
-    {
-        for (int i = 0; i < curr_layer.size(); i++)
-        {
-            curr_layer[i].update_delta(next_layer, i);
-        }
-    }
-
-    void update_output_deltas(Values target_values)
-    {
+        // Compute the deltas in the output layer.
         Layer& output_layer = m_layers[m_layers.size() - 1];
-        for (int i = 0; i < target_values.size(); i++)
+        for (int ni = 0; ni < target_values.size(); ni++)
         {
-            output_layer[i].update_delta(target_values[i]);
+            output_layer[ni].update_delta(target_values[ni]);
+        }
+
+        // Compute the deltas in hidden layers, backwards.
+        for (int li = m_layers.size() - 2; li >= 1; li--)
+        {
+            Layer& curr_layer = m_layers[li];
+            Layer& next_layer = m_layers[li + 1];
+
+            for (int ni = 0; ni < curr_layer.size(); ni++)
+            {
+                curr_layer[ni].update_delta(next_layer, ni);
+            }
+        }
+
+        // Adjust the weights in all layers.
+        for (int li = 1; li < m_layers.size(); li++)
+        {
+            Layer& curr_layer = m_layers[li];
+            Layer& prev_layer = m_layers[li - 1];
+            
+            for (int ni = 0; ni < curr_layer.size(); ni++)
+            {
+                curr_layer[ni].update_weights(prev_layer, m_learn_rate);
+            }
         }
     }
 
-    void update_weights()
+    void log()
     {
-        for (int i = 1; i < m_layers.size(); i++)
+        for (int li = 0; li < m_layers.size(); li++)
         {
-            update_weights(m_layers[i], m_layers[i - 1]);
-        }
-    }
+            std::cout << "### Layer " << li << std::endl;
 
-    void update_weights(Layer& curr_layer, Layer& prev_layer)
-    {
-        for (int i = 0; i < curr_layer.size(); i++)
-        {
-            curr_layer[i].update_weights(prev_layer, m_learn_rate);
+            for (int ni = 0; ni < m_layers[li].size(); ni++)
+            {
+                std::cout << "N " << ni << " v: " << m_layers[li][ni].value() << ", w(";
+                auto& weights = m_layers[li][ni].weights();
+                std::cout << weights.size() << "): ";
+                utils::log_nl(weights);   
+            }
+
+            std::cout << std::endl;
         }
     }
 

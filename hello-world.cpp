@@ -14,7 +14,7 @@ int main()
     Network<float> network;
     network.add_layers({3, 2, 1});
 
-    cout << "First guess (expecting 0): " << endl;
+    cout << "First guess: " << endl;
     log_nl(network.compute({0, 0, 0}));
 
     for (int i = 0; i < 100000; i++)
@@ -28,6 +28,6 @@ int main()
         network.learn({0, 0, 1}, {0});
     }
 
-    cout << "After learning (expecting 0): " << endl;
+    cout << "After learning: " << endl;
     log_nl(network.compute({0, 0, 0}));
 }

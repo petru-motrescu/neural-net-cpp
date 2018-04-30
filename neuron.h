@@ -15,12 +15,16 @@ class Neuron
 public:
     Neuron()
     {
+        // Bias neurons must have always the value 1
         m_value = 1;
     }
 
     Neuron(Layer& prev_layer)
     {
-        m_weights = std::vector<T>(prev_layer.size(), 0.5);
+        for (int i = 0; i < prev_layer.size(); i++)
+        {
+            m_weights.push_back(1);
+        }
     }
 
     Neuron(std::initializer_list<T> weigths)
@@ -42,7 +46,6 @@ public:
             }
 
             m_value = sigmoid(weigthed_sum(prev_layer));
-
             return m_value;
         }
         else
@@ -112,7 +115,7 @@ public:
 private:
     T weigthed_sum(Layer& input_layer)
     {
-        auto sum = 0.0;
+        T sum = 0;
         for (int i = 0; i < m_weights.size(); i++)
         {
             sum += input_layer[i].value() * m_weights[i];
@@ -142,8 +145,8 @@ private:
 
 private:
     std::vector<T> m_weights;
-    T m_value;
-    T m_delta;
+    T m_value = 1;
+    T m_delta = 0;
 };
 
 #endif // NEURON_H
