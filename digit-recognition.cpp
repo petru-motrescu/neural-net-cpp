@@ -9,62 +9,75 @@
 using namespace std;
 using namespace utils;
 
-using ValueType = long double;
-using BitmapType = vector<ValueType>;
-using DigitType = vector<ValueType>;
+using Pixel = long double;
+using Bitmap = vector<Pixel>;
+using BitmapSet = vector<Bitmap>;
+using Digit = vector<Pixel>;
+using DigitSet = vector<Digit>;
 
-void log_results(Network<ValueType>& network, vector<BitmapType>& input_bitmaps)
+void log_results(Network<Pixel>& network, vector<BitmapSet>& sets)
 {
-    for (int digit = 0; digit < 10; digit++)
+    for (int set = 0; set < sets.size(); set++)
     {
-        auto result = network.compute(input_bitmaps[digit]);
-        cout << digit << " --> " << utils::max(result) << " : ";
-        log_nl(result);
+        cout << "Set " << set << endl;
+
+        for (int digit = 0; digit < 10; digit++)
+        {
+            auto result = network.compute(sets[set][digit]);
+            cout << digit << " --> " << utils::max(result) << " : ";
+            log_nl(result);
+        }
     }
 }
 
 int main()
-{   
-    Network<ValueType> network;
-    network.add_layers({100, 20, 10});
-    network.set_learn_rate(0.25);
-    
+{
     vector<string> train_set_paths = 
     {
         "data/digits-10x10/1/",
+        "data/digits-10x10/2/",
     };
 
+    vector<BitmapSet> train_sets;
     for (auto& path : train_set_paths)
     {
-        vector<BitmapType> input_bitmaps;
+        BitmapSet set;
         for (int i = 0; i < 10; i++)
         {
             string digit_file_path(path);
             digit_file_path += to_string(i);
             digit_file_path += ".txt";
-            input_bitmaps.push_back(utils::read_digit_bitmap<ValueType>(digit_file_path));
+            set.push_back(utils::read_digit_bitmap<Pixel>(digit_file_path));
         }
 
-        vector<DigitType> output_digits;
-        for (int digit = 0; digit < 10; digit++)
-        {
-            output_digits.push_back(utils::make_digit_vector<ValueType>(digit));
-        }
+        train_sets.push_back(set);
+    }
 
-        for (int round = 0; round < 1000; round++)
-        {
-            cout << endl << "### Round " << round << endl;
+    DigitSet digits;
+    for (int digit = 0; digit < 10; digit++)
+    {
+        digits.push_back(utils::make_digit_vector<Pixel>(digit));
+    }
 
-            for (int lesson = 0; lesson < 10000; lesson++)
+    Network<Pixel> network;
+    network.add_layers({100, 30, 30, 10});
+    network.set_learn_rate(0.01);
+
+    for (int round = 0; round < 100; round++)
+    {
+        cout << endl << "### Round " << round << endl;
+
+        for (int rep = 0; rep < 1000; rep++)
+        {
+            for (int set = 0; set < train_sets.size(); set++)
             {
                 for (int digit = 0; digit < 10; digit++)
                 {
-                    network.learn(input_bitmaps[digit], output_digits[digit]);
+                    network.learn(train_sets[set][digit], digits[digit]);
                 }
             }
-
-            log_results(network, input_bitmaps);
         }
-        // network.log();
+
+        log_results(network, train_sets);
     }
 }

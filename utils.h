@@ -19,7 +19,7 @@ namespace utils
             char c;
             while (file >> c)
             {
-                pixels.push_back(c == '.' ? 0 : 1);
+                pixels.push_back(c == '.' ? 0.000001 : 0.999999);
             }
         }
 
