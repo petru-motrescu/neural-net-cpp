@@ -19,14 +19,13 @@ void log_results(Network<Pixel>& network, vector<BitmapSet>& sets)
 {
     for (int set = 0; set < sets.size(); set++)
     {
-        cout << "Set " << set << endl;
-
         for (int digit = 0; digit < 10; digit++)
         {
             auto result = network.compute(sets[set][digit]);
-            cout << digit << " --> " << utils::max(result) << " : ";
-            log_nl(result);
+            cout << utils::max(result) << ", ";
         }
+
+        cout << endl;
     }
 }
 
@@ -36,6 +35,8 @@ int main()
     {
         "data/digits-10x10/1/",
         "data/digits-10x10/2/",
+        "data/digits-10x10/3/",
+        "data/digits-10x10/4/",
     };
 
     vector<BitmapSet> train_sets;
@@ -60,10 +61,10 @@ int main()
     }
 
     Network<Pixel> network;
-    network.add_layers({100, 30, 30, 10});
-    network.set_learn_rate(0.01);
+    network.add_layers({100, 16, 10});
+    network.set_learn_rate(0.025);
 
-    for (int round = 0; round < 100; round++)
+    for (int round = 0; round < 10000; round++)
     {
         cout << endl << "### Round " << round << endl;
 
