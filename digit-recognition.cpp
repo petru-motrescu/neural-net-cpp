@@ -37,6 +37,7 @@ int main()
         "data/digits-10x10/2/",
         "data/digits-10x10/3/",
         "data/digits-10x10/4/",
+        "data/digits-10x10/5/",
     };
 
     vector<BitmapSet> train_sets;
