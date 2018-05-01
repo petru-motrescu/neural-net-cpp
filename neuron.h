@@ -19,11 +19,11 @@ public:
         m_value = 1;
     }
 
-    Neuron(Layer& prev_layer)
+    Neuron(int weight_count)
     {
-        for (int i = 0; i < prev_layer.size(); i++)
+        for (int i = 0; i < weight_count; i++)
         {
-            m_weights.push_back(0);
+            m_weights.push_back(1 / (T)rand());
         }
     }
 

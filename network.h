@@ -37,24 +37,28 @@ public:
 
     void add_layer(int neuron_count, bool add_bias_neuron = true)
     {
-        Layer* last_layer = (m_layers.size() > 0) ? &m_layers[m_layers.size() - 1] : nullptr;
+        int last_layer_size = (m_layers.size() > 0) ? m_layers[m_layers.size() - 1].size() : 0;
         Layer layer;
 
         for (int i = 0; i < neuron_count; i++)
         {
-            if (last_layer != nullptr)
+            if (last_layer_size > 0)
             {
-                layer.push_back(Neuron<T>(*last_layer));
+                srand(m_total_neuron_count);
+                layer.push_back(Neuron<T>(last_layer_size));
             }
             else
             {
                 layer.push_back(Neuron<T>());
             }
+
+            m_total_neuron_count++;
         };
 
         if (add_bias_neuron)
         {
             layer.push_back(Neuron<T>());
+            m_total_neuron_count++;
         }
 
         m_layers.push_back(layer);
@@ -135,16 +139,23 @@ public:
 
     void log()
     {
+        std::cout << std::endl << "Network with " << m_total_neuron_count << " neurons" << std::endl << std::endl;
+
         for (int li = 0; li < m_layers.size(); li++)
         {
-            std::cout << "### Layer " << li << std::endl;
+            std::cout << "###" << std::endl << std::endl;
 
             for (int ni = 0; ni < m_layers[li].size(); ni++)
             {
-                std::cout << "N " << ni << " v: " << m_layers[li][ni].value() << ", w(";
+                std::cout << "Neuron[" << li << "][" << ni << "] Value = " << m_layers[li][ni].value();
                 auto& weights = m_layers[li][ni].weights();
-                std::cout << weights.size() << "): ";
-                utils::log_nl(weights);   
+                if (weights.size() > 0)
+                {
+                    std::cout << " Weights = ";
+                    utils::log_nl(weights); 
+                }
+                
+                std::cout << std::endl;
             }
 
             std::cout << std::endl;
@@ -153,6 +164,7 @@ public:
 
 private:
     std::vector<Layer> m_layers;
+    int m_total_neuron_count;
     T m_learn_rate;
 };
 

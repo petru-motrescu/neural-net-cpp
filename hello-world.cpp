@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 #include <vector>
 #include "network.h"
 #include "utils.h"
@@ -11,6 +12,8 @@ using namespace utils;
 
 int main()
 {
+    std::cout << std::fixed << std::setprecision(12);
+
     Network<float> network;
     network.add_layers({3, 2, 1});
 

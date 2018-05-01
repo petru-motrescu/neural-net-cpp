@@ -37,7 +37,10 @@ namespace utils
     template<typename T>
     void log(const std::vector<T>& v)
     {
-        std::copy(v.begin(), v.end(), std::ostream_iterator<T>(std::cout, ","));
+        for (int i = 0; i < v.size(); i++)
+        {
+            std::cout << v[i] << " "; 
+        }
     }
 
     template<typename T>

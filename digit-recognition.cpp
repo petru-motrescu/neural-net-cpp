@@ -18,11 +18,11 @@ using DigitSet = vector<Digit>;
 
 void log_result(Digit& v, int expected)
 {
-    cout << expected << " ---> " << utils::max(v) << " : ";
+    cout << expected << " ---> " << utils::max(v) << "  ";
 
     for (int i = 0; i < v.size(); i++)
     {
-        cout << "[" << i << " = " << fixed << setprecision(4) << v[i] << "] ";
+        cout << "[" << i << " : " << v[i] << "] ";
     }
 
     cout << endl;
@@ -44,6 +44,8 @@ void log_results(Network<Pixel>& network, vector<BitmapSet>& sets)
 
 int main()
 {
+    std::cout << std::fixed << std::setprecision(4);
+
     vector<string> train_set_paths = 
     {
         "data/digits-10x10/1/",
