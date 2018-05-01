@@ -9,6 +9,38 @@
 
 namespace utils
 {
+    void set_console_decimals(int count)
+    {
+        std::cout << std::fixed << std::setprecision(count) << std::endl;
+    }
+
+    void set_console_color()
+    {
+        std::cout << "\x1b[103m";
+    }
+
+    void clear_console_color()
+    {
+        std::cout << "\x1B[0m";
+    }
+
+    void log_colored_nl(const char* msg)
+    {
+        set_console_color();
+        std::cout << msg;
+        clear_console_color();
+        std::cout << std::endl << std::endl;
+    }
+
+    template<typename T>
+    void log_colored_nl(const char* msg, T value)
+    {
+        set_console_color();
+        std::cout << msg << " " << value;
+        clear_console_color();
+        std::cout << std::endl << std::endl;
+    }
+
     template<typename T>
     std::vector<T> read_digit_bitmap(std::string filename)
     {
@@ -19,7 +51,7 @@ namespace utils
             char c;
             while (file >> c)
             {
-                pixels.push_back(c == '.' ? 0.000001 : 0.999999);
+                pixels.push_back(c == '.' ? 0 : 1);
             }
         }
 
@@ -47,6 +79,17 @@ namespace utils
     void log_nl(const std::vector<T>& v)
     {
         log(v);
+        std::cout << std::endl;
+    }
+
+    template<typename T>
+    void log_details_nl(const std::vector<T>& v)
+    {
+        for (int i = 0; i < v.size(); i++)
+        {
+            std::cout << "[" << i << " : " << v[i] << "] ";
+        }
+
         std::cout << std::endl;
     }
 

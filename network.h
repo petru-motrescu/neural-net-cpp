@@ -11,8 +11,6 @@
 #include "neuron.h"
 #include "utils.h"
 
-using namespace std; // TEMPX
-
 template<typename T>
 class Network
 {
