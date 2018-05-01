@@ -23,7 +23,7 @@ public:
 public:
     Network()
     {
-        m_learn_rate = 1;
+        m_learn_rate = 0.01;
     }
 
     void add_layers(std::vector<int> neuron_counts)

@@ -78,7 +78,7 @@ int main()
 
     Network<Pixel> network;
     network.add_layers({100, 16, 10});
-    network.set_learn_rate(0.025);
+    network.set_learn_rate(0.01);
 
     for (int round = 0; round < 10; round++)
     {
