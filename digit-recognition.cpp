@@ -1,6 +1,7 @@
 // Petru Motrescu <petru.motrescu@gmail.com>, 2018
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <vector>
 #include "network.h"
@@ -15,6 +16,18 @@ using BitmapSet = vector<Bitmap>;
 using Digit = vector<Pixel>;
 using DigitSet = vector<Digit>;
 
+void log_result(Digit& v, int expected)
+{
+    cout << expected << " ---> " << utils::max(v) << " : ";
+
+    for (int i = 0; i < v.size(); i++)
+    {
+        cout << "[" << i << " = " << fixed << setprecision(4) << v[i] << "] ";
+    }
+
+    cout << endl;
+}
+
 void log_results(Network<Pixel>& network, vector<BitmapSet>& sets)
 {
     for (int set = 0; set < sets.size(); set++)
@@ -22,7 +35,7 @@ void log_results(Network<Pixel>& network, vector<BitmapSet>& sets)
         for (int digit = 0; digit < 10; digit++)
         {
             auto result = network.compute(sets[set][digit]);
-            cout << utils::max(result) << ", ";
+            log_result(result, digit);
         }
 
         cout << endl;
@@ -65,7 +78,7 @@ int main()
     network.add_layers({100, 16, 10});
     network.set_learn_rate(0.025);
 
-    for (int round = 0; round < 10000; round++)
+    for (int round = 0; round < 10; round++)
     {
         cout << endl << "### Round " << round << endl;
 
