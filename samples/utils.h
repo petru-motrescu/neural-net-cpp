@@ -45,6 +45,8 @@ namespace utils
             while (file >> c) {
                 pixels.push_back(c == '.' ? 0 : 1);
             }
+        } else {
+            log_colored_nl("File not found:", filename);
         }
         return pixels;
     }

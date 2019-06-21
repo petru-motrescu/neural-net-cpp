@@ -4,8 +4,8 @@
 #include <iomanip>
 #include <fstream>
 #include <vector>
-#include "network.h"
-#include "utils.h"
+#include <neural-net/network.h>
+#include <samples/utils.h>
 
 using namespace std;
 using namespace utils;
@@ -34,11 +34,11 @@ int main() {
     utils::log_colored_nl("Hi! Give me a few minutes to train!");
 
     vector<string> train_set_paths = {
-        "digits-10x10/training-set-1/",
-        "digits-10x10/training-set-2/",
-        "digits-10x10/training-set-3/",
-        "digits-10x10/training-set-4/",
-        "digits-10x10/training-set-5/",
+        "train-sets/1/",
+        "train-sets/2/",
+        "train-sets/3/",
+        "train-sets/4/",
+        "train-sets/5/",
     };
 
     vector<BitmapSet> train_sets;
@@ -80,7 +80,7 @@ int main() {
 
     while (true) {
         
-        cout << "Input a file path or Q to exit: ";
+        cout << "Input the path to a digit file (test-sets/1/0.txt): ";
         string path;
         cin >> path;
         cout << endl;

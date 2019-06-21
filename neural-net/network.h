@@ -9,7 +9,6 @@
 #include <initializer_list>
 
 #include "neuron.h"
-#include "utils.h"
 
 template<typename T>
 class Network {
@@ -126,8 +125,7 @@ public:
                 std::cout << "Neuron[" << li << "][" << ni << "] Value = " << m_layers[li][ni].value();
                 auto& weights = m_layers[li][ni].weights();
                 if (weights.size() > 0) {
-                    std::cout << " Weights = ";
-                    utils::log_nl(weights); 
+                    std::cout << " Weights = " << weights << std::endl;
                 }
                 std::cout << std::endl;
             }

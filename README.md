@@ -3,16 +3,15 @@
 A simple neural network implemented in C++
 
 
-## Hello world example
+## Samples
+
+### Digit recognition
 ```
-mkdir -p bin && g++ -std=c++11 hello-world.cpp -o ./bin/hello-world && ./bin/hello-world
+cd ./samples/digit-reco && g++ -std=c++11 -I ./../../ main.cpp -o main.app && ./main.app
 ```
 
-## Digit recognition example
-```
-mkdir -p bin && g++ -std=c++11 digit-recognition.cpp -o ./bin/digit-recognition && ./bin/digit-recognition
-```
 
 ## TODO
-- Neuron builder
+- Neuron & Network builders
 - Bring back the tests
+- Add more samples
