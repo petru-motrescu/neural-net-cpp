@@ -54,12 +54,6 @@ public:
         }
     }
 
-    T compute(Values prev_values)
-    {
-        Layer temp_layer = make_wrap_layer(prev_values);
-        return compute(temp_layer);
-    }
-
     void update_delta(T target)
     {
         if (!is_bias())
@@ -96,14 +90,6 @@ public:
                 m_weights[i] += shift;
             }
         }
-    }
-
-    void learn(Values input_values, T target_value)
-    {
-        Layer temp_layer = make_wrap_layer(input_values);
-        compute(temp_layer);
-        update_delta(target_value);
-        update_weights(temp_layer);
     }
 
     void reset(T value) { m_value = value; }
