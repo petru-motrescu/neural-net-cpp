@@ -7,8 +7,8 @@
 #include <cmath>
 
 template<typename T>
-class Neuron
-{
+class Neuron {
+
     typedef std::vector<Neuron<T>> Layer;
     typedef std::vector<T> Values;
 
@@ -94,16 +94,6 @@ private:
     double sigmoid(T val) {
         T exp = std::exp(val);
         return exp / (exp + 1);
-    }
-
-    Layer make_wrap_layer(Values values) {
-        Layer layer;
-        for (auto& value : values) {
-            Neuron<T> neuron;
-            neuron.reset(value);
-            layer.push_back(neuron);
-        }
-        return layer;
     }
 
 private:

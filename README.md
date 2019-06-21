@@ -5,13 +5,14 @@ A simple neural network implemented in C++
 
 ## Hello world example
 ```
-g++ -std=c++11 hello-world.cpp -o hello-world && ./hello-world
+mkdir -p bin && g++ -std=c++11 hello-world.cpp -o ./bin/hello-world && ./bin/hello-world
 ```
 
 ## Digit recognition example
 ```
-g++ -std=c++11 digit-recognition.cpp -o digit-recognition && ./digit-recognition
+mkdir -p bin && g++ -std=c++11 digit-recognition.cpp -o ./bin/digit-recognition && ./bin/digit-recognition
 ```
 
 ## TODO
+- Neuron builder
 - Bring back the tests
