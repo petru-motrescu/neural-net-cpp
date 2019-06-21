@@ -10,8 +10,8 @@
 using namespace std;
 using namespace utils;
 
-int main()
-{
+int main() {
+    
     std::cout << std::fixed << std::setprecision(12);
 
     Network<float> network;
@@ -20,8 +20,7 @@ int main()
     cout << "First guess: " << endl;
     log_nl(network.compute({0, 0, 0}));
 
-    for (int i = 0; i < 100000; i++)
-    {
+    for (int i = 0; i < 100000; i++) {
         network.learn({1, 1, 1}, {1});
         network.learn({1, 1, 0}, {1});
         network.learn({1, 0, 1}, {1});
