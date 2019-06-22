@@ -6,11 +6,12 @@
 #include <vector>
 #include <cmath>
 
-template<typename T>
 class Neuron {
 
-    typedef std::vector<Neuron<T>> Layer;
-    typedef std::vector<T> Values;
+public:
+    typedef long double ValueType;
+    typedef std::vector<Neuron> Layer;
+    typedef std::vector<ValueType> Values;
 
 public:
     Neuron() {
@@ -20,15 +21,15 @@ public:
 
     Neuron(int weight_count) {
         for (int i = 0; i < weight_count; i++) {
-            m_weights.push_back(1 / (T)rand());
+            m_weights.push_back(1 / (ValueType)rand());
         }
     }
 
-    Neuron(std::initializer_list<T> weigths) {
+    Neuron(std::initializer_list<ValueType> weigths) {
         m_weights = weigths;
     }
 
-    T compute(Layer& prev_layer) {
+    ValueType compute(Layer& prev_layer) {
 
         if (is_bias()) { return m_value; }
 
@@ -44,7 +45,7 @@ public:
         return m_value;
     }
 
-    void update_delta(T target) {
+    void update_delta(ValueType target) {
         if (is_bias()) { return; }
         m_delta = (target - m_value) * m_value * (1 - m_value);
     }
@@ -63,43 +64,43 @@ public:
         m_delta *= m_value * (1 - m_value);
     }
 
-    void update_weights(Layer& prev_layer, T learn_rate) {
+    void update_weights(Layer& prev_layer, ValueType learn_rate) {
         if (!is_bias()) {
             for (int i = 0; i < m_weights.size(); i++) {
-                T shift = learn_rate * m_delta * prev_layer[i].value();
+                ValueType shift = learn_rate * m_delta * prev_layer[i].value();
                 m_weights[i] += shift;
             }
         }
     }
 
-    void reset(T value) { m_value = value; }
+    void reset(ValueType value) { m_value = value; }
 
-    T value() const { return m_value; }
+    ValueType value() const { return m_value; }
 
-    T delta() const { return m_delta; }
+    ValueType delta() const { return m_delta; }
 
     bool is_bias() const { return m_weights.size() == 0; }
 
-    const std::vector<T> weights() const { return m_weights; }
+    const std::vector<ValueType> weights() const { return m_weights; }
 
 private:
-    T weigthed_sum(Layer& input_layer) {
-        T sum = 0;
+    ValueType weigthed_sum(Layer& input_layer) {
+        ValueType sum = 0;
         for (int i = 0; i < m_weights.size(); i++) {
             sum += input_layer[i].value() * m_weights[i];
         }
         return sum;
     }
 
-    double sigmoid(T val) {
-        T exp = std::exp(val);
+    ValueType sigmoid(ValueType val) {
+        ValueType exp = std::exp(val);
         return exp / (exp + 1);
     }
 
 private:
-    std::vector<T> m_weights;
-    T m_value = 1;
-    T m_delta = 0;
+    std::vector<ValueType> m_weights;
+    ValueType m_value = 1;
+    ValueType m_delta = 0;
 };
 
 #endif // NEURON_H

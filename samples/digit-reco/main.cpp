@@ -10,13 +10,13 @@
 using namespace std;
 using namespace utils;
 
-using Pixel = long double;
+using Pixel = Neuron::ValueType;
 using Bitmap = vector<Pixel>;
 using BitmapSet = vector<Bitmap>;
 using Digit = vector<Pixel>;
 using DigitSet = vector<Digit>;
 
-void log_train_results(Network<Pixel>& network, vector<BitmapSet>& sets) {
+void log_train_results(Network& network, vector<BitmapSet>& sets) {
     for (int set = 0; set < sets.size(); set++) {
         for (int digit = 0; digit < 10; digit++) {
             auto result = network.compute(sets[set][digit]);
@@ -33,13 +33,10 @@ int main() {
     utils::set_console_decimals(4);
     utils::log_colored_nl("Hi! Give me a few minutes to train!");
 
-    vector<string> train_set_paths = {
-        "train-sets/1/",
-        "train-sets/2/",
-        "train-sets/3/",
-        "train-sets/4/",
-        "train-sets/5/",
-    };
+    vector<string> train_set_paths;
+    for (int i = 1; i <= 5; i++) {
+        train_set_paths.push_back("train-sets/" + std::to_string(i) + "/");
+    }
 
     vector<BitmapSet> train_sets;
     for (auto& path : train_set_paths) {
@@ -58,7 +55,7 @@ int main() {
         digits.push_back(utils::make_digit_vector<Pixel>(digit));
     }
 
-    Network<Pixel> network;
+    Network network;
     network.add_layers({100, 55, 10});
     network.set_learn_rate(0.01);
 
